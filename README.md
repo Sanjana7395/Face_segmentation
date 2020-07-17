@@ -69,7 +69,7 @@ Documentation for the code
 4. __test.py__  
     This file helps in visualizing segmentation for a given test image. Usage is as follows
       
-         python test.py
+         python test.py -v <visualization_method>
          
       for help on usage
       
