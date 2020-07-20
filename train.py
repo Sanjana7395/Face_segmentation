@@ -30,6 +30,7 @@ class Train:
     :type image_shape: array
 
     """
+
     def __init__(self):
         """ Constructor method.
 
@@ -38,7 +39,7 @@ class Train:
         self.alpha = 0.25
         self.num_classes = 19
         self.learning_rate = 0.001
-        self.epochs = 35
+        self.epochs = 50
         self.image_shape = (256, 256, 3)
 
     def categorical_focal_loss(self):
@@ -55,6 +56,7 @@ class Train:
          model.compile(loss=[categorical_focal_loss(alpha=.25, gamma=2)],
          metrics=["accuracy"], optimizer=adam)
         """
+
         def categorical_focal_loss_fixed(y_true, y_pred):
             """
             :param y_true: A tensor of the same shape as `y_pred`
@@ -118,17 +120,17 @@ class Train:
         """
         return tf.py_function(self.compute_iou, [y_true, y_pred], tf.float32)
 
-    def train(self, model):
+    def train(self, model_name):
         """ Train the model and check its metrics
 
-        :param model: train the keras model using the given datasets
-        :type model: tensors
+        :param model_name: train the keras model using the given datasets
+        :type model_name: tensors
 
         """
         input_img = Input(shape=self.image_shape, name='img')
-        if model == 'unet':
+        if model_name == 'unet':
             model = u_net.get_u_net(input_img, num_classes=self.num_classes)
-        elif model == 'deeplab':
+        elif model_name == 'deeplab':
             model = deeplab.deeplabv3_plus(num_classes=self.num_classes)
         optimizer = Adam(learning_rate=self.learning_rate)
         loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
@@ -142,7 +144,11 @@ class Train:
                                       patience=5, min_lr=0.00000001)
         early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                       patience=10)
-        log_dir = 'logs/fit/' + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        make_folder(os.path.join(os.path.dirname(__file__),
+                                 'logs/fit'))
+        log_dir = os.path.join(os.path.dirname(__file__),
+                               'logs/fit/',
+                               datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         t_board = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
                                                  histogram_freq=0)
 
@@ -153,17 +159,16 @@ class Train:
 
         print("========================")
         print('[EVALUATION ON TEST SET]')
-        print('%s: %.2f%%' % (model.metrics_names[0], scores[0]))
+        print('{}: {:0.4f}'.format(model.metrics_names[0], scores[0]))
         print('%s: %.2f%%' % (model.metrics_names[1], scores[1] * 100))
         print('%s: %.2f%%' % (model.metrics_names[2], scores[2] * 100))
         print("========================")
 
-        MODEL_DIR = 'results/models'
+        MODEL_DIR = os.path.join(os.path.dirname(__file__), 'results/models/')
         make_folder(MODEL_DIR)
-        model_name = (datetime.datetime.now().strftime("%Y/%m/%d-%H-%M-%S")
-                      + model)
+        file_name = datetime.datetime.now().strftime("%m%d_%H%M") + "-" + model_name
         model.save(os.path.join(MODEL_DIR,
-                                '{}.h5'.format(model_name)),
+                                '{}.h5'.format(file_name)),
                    model)
 
 
