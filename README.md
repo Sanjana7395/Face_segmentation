@@ -78,7 +78,7 @@ Documentation for the code
       
          python app.py --help
 
-5. __experiments__
+5. __experiments__    
     This folder contains the code to change the lip and hair color from the segmentation mask obtained.
       
 Results
