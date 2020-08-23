@@ -1,7 +1,10 @@
 # Face Segmentation
 
 This project parses different parts of the face using semantic segmentation. The Machine
-learning model used is U-Net
+learning model used is U-Net.    
+The experiments folder contains application of semantic segmentation i.e. to change lip
+and hair color. Refer [Github](https://github.com/Sanjana7395/face_makeup_app.git) code 
+for browser application to do the same using tensorflow.js and opencv.js.
 
 Configuration of Project Environment
 =====================================
@@ -74,6 +77,9 @@ Documentation for the code
       for help on usage
       
          python app.py --help
+
+5. __experiments__
+    This folder contains the code to change the lip and hair color from the segmentation mask obtained.
       
 Results
 ========
